@@ -1,0 +1,32 @@
+2
+3
+Jujuy
+Tucumán
+Buenos Aires
+4
+2
+0949 Jujuy
+1006 Tucumán
+3
+1000 Jujuy
+12:00 Tucumán
+1550 Buenos Aires
+2
+1205 Tucumán
+1411 Buenos Aires
+2
+0700 Jujuy
+12:00 Buenos Aires
+0800
+Jujuy
+Buenos Aires
+2
+Córdoba
+La Plata
+1
+2
+0100 Córdoba
+0600 La Plata
+0800
+Córdoba
+La Plata
