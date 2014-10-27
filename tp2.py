@@ -12,6 +12,10 @@ class TP2:
             for i in xrange(cantidad_escenarios):
                 self.escenarios.append(Escenario(f))
 
+    def resolver(self):
+        for escenario in self.escenarios:
+            escenario.resolver()
+
 
 import unittest
 
