@@ -2,6 +2,7 @@
 # coding=utf-8
 
 from escenario import Escenario
+import sys
 
 class TP2:
 
@@ -15,6 +16,13 @@ class TP2:
     def resolver(self):
         for escenario in self.escenarios:
             escenario.resolver()
+
+    def imprimir_solucion(self):
+        for i in xrange(len(self.escenarios)):
+            escenario = self.escenarios[i]
+            print 'Escenario %s' % (i+1)
+            escenario.imprimir_solucion()
+            print
 
 
 import unittest
@@ -41,5 +49,17 @@ class TP2TestCase(unittest.TestCase):
             escenario2.get_id_ciudad('La Plata'))),1)
 
 
+def reporte_tp2():
+    for filepath in sys.argv[1:]:
+        tp2 = TP2(filepath)
+        tp2.resolver()
+        tp2.imprimir_solucion()
+
+
 if __name__ == '__main__':
-    unittest.main()
+    if len(sys.argv) == 1:
+        unittest.main()
+    else:
+        reporte_tp2()
+
+

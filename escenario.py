@@ -2,10 +2,17 @@
 # coding=utf-8
 
 from tramo import Tramo
+from lista_ordenada import ListaOrdenada, ElementoNoEncontrado
+from optimo import Optimo
+
+class OptimoNoEncontrado(Exception):
+    pass
+
 
 def normalizar_horario(x):
     x = x.replace(':','')
     return int(x[0:2])*60+int(x[2:4])
+
 
 class Escenario:
 
@@ -56,38 +63,61 @@ class Escenario:
         """
 
         self.solucion = []
-        for k in self.ciudades:
-            solucion.append([])
-            for ciudad in self.ciudades:
-                solucion[k][ciudad].append(ListaOrdenada())
+        for k in xrange(len(self.ciudades)):
+            self.solucion.append([])
+            for ciudad in xrange(len(self.ciudades)):
+                self.solucion[k].append(ListaOrdenada())
 
-        solucion[0][self.ciudad_origen].insert(Optimo(
-            Tramo(None, self.ciudad_origen, self.ciudad_origen,
-                self.horario_inicial, self.horario_inicial), 0))
+        self.solucion[0][self.ciudad_origen].insert(Optimo(
+            self.horario_inicial, Tramo(None, self.ciudad_origen,
+                self.ciudad_origen, self.horario_inicial,
+                self.horario_inicial), 0))
 
         for k in xrange(1,len(self.ciudades)):
-            for ciudad in self.ciudades:
+            for ciudad in xrange(len(self.ciudades)):
                 for tramo in self.get_tramos_a_ciudad(ciudad):
                     try:
                         optimoAnterior = self.solucion[k-1][tramo.ciudad_origen].get_anterior_mas_cercano(
-                                Optimo(tramo.horario_salida, None))
-                    except OptimoNoEncontrado:
+                                Optimo(tramo.horario_salida, None, None))
+                    except ElementoNoEncontrado:
                         continue
                     tiempo_total = optimoAnterior.tiempo_total + (tramo.horario_llegada - 
                             optimoAnterior.tramo.horario_llegada)
                     self.solucion[k][ciudad].insert(
-                            Optimo(tramo, tiempo_total, optimoAnterior))
+                            Optimo(tramo.horario_llegada,
+                                tramo, tiempo_total, optimoAnterior))
 
-        optimos = []
+        self.optimos = []
         tiempo_total_optimo = None
-        for k in self.ciudades:
+        for k in xrange(len(self.ciudades)):
             for solucion in self.solucion[k][self.ciudad_destino].iteritems():
                 if tiempo_total_optimo is None:
-                    optimos = [solucion]
+                    self.optimos = [solucion]
                     tiempo_total_optimo = solucion.tiempo_total
                 elif solucion.tiempo_total == tiempo_total_optimo:
-                    optimos.append(solucion)
+                    self.optimos.append(solucion)
                 elif solucion.tiempo_total < tiempo_total_optimo:
-                    optimos = [solucion]
+                    self.optimos = [solucion]
                     tiempo_total_optimo = solucion.tiempo_total
+
+    def imprimir_solucion(self):
+        if len(self.optimos) == 0:
+            print 'Sin combinaciones posibles'
+            return
+        for optimo in self.optimos:
+            solucion = []
+            ultimo = optimo
+            optimo = optimo.optimoAnterior
+            while optimo.optimoAnterior is not None:
+                solucion.insert(1,optimo)
+                optimo = optimo.optimoAnterior
+            print 'Salida %s %s' % (optimo.tramo.horario_salida, 
+                    self.ciudades[optimo.tramo.ciudad_origen])
+            for optimo in solucion:
+                print 'Trasbordo %s %s' % (optimo.tramo.horario_salida,
+                        self.ciudades[optimo.tramo.ciudad_origen])
+            print 'Arribo %s %s' % (ultimo.tramo.horario_salida, 
+                    self.ciudades[ultimo.tramo.ciudad_origen])
+
+
 

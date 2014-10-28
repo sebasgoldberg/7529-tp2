@@ -3,6 +3,9 @@
 
 import bisect
 
+class ElementoNoEncontrado(Exception):
+    pass
+
 class ListaOrdenada():
 
     def __init__(self):
@@ -28,6 +31,20 @@ class ListaOrdenada():
         if i <> len(self.lista) and self.lista[i] == node: 
             return True
         return False
+
+    def get_anterior_mas_cercano(self, x):
+        """
+        O(n*log(n))
+        """
+        i = bisect.bisect_left(self.lista, x)
+        if i == len(self.lista):
+            raise ElementoNoEncontrado
+        if self.lista[i] == x: 
+            return self.lista[i]
+        if (i-1) >= 0:
+            return self.lista[i-1]
+        raise ElementoNoEncontrado
+
 
     def intersection(self, other):
         """
