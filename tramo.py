@@ -11,3 +11,7 @@ class Tramo:
         self.horario_salida = horario_salida
         self.horario_llegada = horario_llegada
 
+    def __str__(self):
+        return '[Tren: %s] [Origen: %s] [Destino: %s] [Salida: %s] [Llegada: %s]' % (
+                self.tren, self.ciudad_origen, self.ciudad_destino,
+                self.horario_salida, self.horario_llegada)

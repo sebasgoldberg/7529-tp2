@@ -4,14 +4,10 @@
 from tramo import Tramo
 from lista_ordenada import ListaOrdenada, ElementoNoEncontrado
 from optimo import Optimo
+from horario import *
 
 class OptimoNoEncontrado(Exception):
     pass
-
-
-def normalizar_horario(x):
-    x = x.replace(':','')
-    return int(x[0:2])*60+int(x[2:4])
 
 
 class Escenario:
@@ -106,18 +102,19 @@ class Escenario:
             return
         for optimo in self.optimos:
             solucion = []
-            ultimo = optimo
-            optimo = optimo.optimoAnterior
             while optimo.optimoAnterior is not None:
-                solucion.insert(1,optimo)
+                solucion.insert(0,optimo)
                 optimo = optimo.optimoAnterior
-            print 'Salida %s %s' % (optimo.tramo.horario_salida, 
-                    self.ciudades[optimo.tramo.ciudad_origen])
-            for optimo in solucion:
-                print 'Trasbordo %s %s' % (optimo.tramo.horario_salida,
-                        self.ciudades[optimo.tramo.ciudad_origen])
-            print 'Arribo %s %s' % (ultimo.tramo.horario_salida, 
-                    self.ciudades[ultimo.tramo.ciudad_origen])
+            print 'Salida %s %s' % (
+                    format_horario(solucion[0].tramo.horario_salida),
+                    self.ciudades[solucion[0].tramo.ciudad_origen])
+            for optimo in solucion[:-1]:
+                print 'Trasbordo %s %s' % (
+                        format_horario(optimo.tramo.horario_llegada),
+                        self.ciudades[optimo.tramo.ciudad_destino])
+            print 'Arribo %s %s' % (
+                    format_horario(solucion[-1].tramo.horario_llegada),
+                    self.ciudades[solucion[-1].tramo.ciudad_destino])
 
 
 

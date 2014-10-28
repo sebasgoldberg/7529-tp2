@@ -7,7 +7,7 @@ class Optimo:
         self.horario_llegada = horario_llegada
         self.tramo = tramo
         self.tiempo_total = tiempo_total
-        self.optimoAnterior = None
+        self.optimoAnterior = optimoAnterior
 
     def __cmp__(self, other):
         if self.horario_llegada > other.horario_llegada:
@@ -15,3 +15,6 @@ class Optimo:
         if self.horario_llegada < other.horario_llegada:
             return -1
         return 0
+
+    def __str__(self):
+        return '%s [Total: %s]' % (self.tramo, self.tiempo_total)

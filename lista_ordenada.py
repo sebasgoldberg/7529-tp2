@@ -36,9 +36,11 @@ class ListaOrdenada():
         """
         O(n*log(n))
         """
+        if len(self.lista) == 0:
+            raise ElementoNoEncontrado
         i = bisect.bisect_left(self.lista, x)
         if i == len(self.lista):
-            raise ElementoNoEncontrado
+            return self.lista[i-1]
         if self.lista[i] == x: 
             return self.lista[i]
         if (i-1) >= 0:
