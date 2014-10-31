@@ -48,6 +48,23 @@ class TP2TestCase(unittest.TestCase):
         self.assertEqual(len(escenario2.get_tramos_a_ciudad(
             escenario2.get_id_ciudad('La Plata'))),1)
 
+    def test_resolucion_ejemplo(self):
+
+        tp2 = TP2('ejemplo.txt')
+        tp2.resolver()
+
+        itinerarios = tp2.escenarios[0].get_itinerarios_optimos()
+        itinerario = itinerarios[0]
+        self.assertEqual(itinerario[0].hora, '1000')
+        self.assertEqual(itinerario[0].ciudad, 'Jujuy')
+        self.assertEqual(itinerario[1].hora, '1200')
+        self.assertEqual(itinerario[1].ciudad, 'Tucumán')
+        self.assertEqual(itinerario[2].hora, '1411')
+        self.assertEqual(itinerario[2].ciudad, 'Buenos Aires')
+
+        itinerarios = tp2.escenarios[1].get_itinerarios_optimos()
+        self.assertEqual(itinerarios, [])
+
 
 def reporte_tp2():
     for filepath in sys.argv[1:]:

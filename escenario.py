@@ -10,6 +10,13 @@ class OptimoNoEncontrado(Exception):
     pass
 
 
+class ItemItinerario:
+
+    def __init__(self, hora, ciudad):
+        self.hora = hora
+        self.ciudad = ciudad
+
+
 class Escenario:
 
     def __init__(self, f):
@@ -96,25 +103,40 @@ class Escenario:
                     self.optimos = [solucion]
                     tiempo_total_optimo = solucion.tiempo_total
 
-    def imprimir_solucion(self):
+    def get_itinerarios_optimos(self):
+        itinerarios = []
         if len(self.optimos) == 0:
-            print 'Sin combinaciones posibles'
-            return
+            return itinerarios
         for optimo in self.optimos:
+            itinerario = []
             solucion = []
             while optimo.optimoAnterior is not None:
                 solucion.insert(0,optimo)
                 optimo = optimo.optimoAnterior
-            print 'Salida %s %s' % (
+            itinerario.append(ItemItinerario(
                     format_horario(solucion[0].tramo.horario_salida),
-                    self.ciudades[solucion[0].tramo.ciudad_origen])
+                    self.ciudades[solucion[0].tramo.ciudad_origen]))
             for optimo in solucion[:-1]:
-                print 'Trasbordo %s %s' % (
+                itinerario.append(ItemItinerario(
                         format_horario(optimo.tramo.horario_llegada),
-                        self.ciudades[optimo.tramo.ciudad_destino])
-            print 'Arribo %s %s' % (
+                        self.ciudades[optimo.tramo.ciudad_destino]))
+            itinerario.append(ItemItinerario(
                     format_horario(solucion[-1].tramo.horario_llegada),
-                    self.ciudades[solucion[-1].tramo.ciudad_destino])
+                    self.ciudades[solucion[-1].tramo.ciudad_destino]))
+            itinerarios.append(itinerario)
+        return itinerarios
 
 
-
+    def imprimir_solucion(self):
+        itinerarios = self.get_itinerarios_optimos()
+        if len(itinerarios) == 0:
+            print 'Sin combinaciones posibles'
+            return
+        for itinerario in itinerarios:
+            print 'Salida %s %s' % (
+                    itinerario[0].hora, itinerario[0].ciudad)
+            for item in itinerario[1:-1]:
+                print 'Trasbordo %s %s' % (
+                    item.hora, item.ciudad)
+            print 'Arribo %s %s' % (
+                    itinerario[-1].hora, itinerario[-1].ciudad)
