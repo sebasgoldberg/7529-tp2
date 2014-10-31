@@ -5,6 +5,7 @@ from tramo import Tramo
 from lista_ordenada import ListaOrdenada, ElementoNoEncontrado
 from optimo import Optimo
 from horario import *
+import sys
 
 class OptimoNoEncontrado(Exception):
     pass
@@ -18,6 +19,21 @@ class ItemItinerario:
         """
         self.hora = hora
         self.ciudad = ciudad
+
+    def __str__(self):
+        return '%s %s' % (self.hora, self.ciudad)
+
+    def __cmp__(self, other):
+        if self.hora < other.hora:
+            return -1
+        if self.hora > other.hora:
+            return 1
+        if self.ciudad < other.ciudad:
+            return -1
+        if self.ciudad > other.ciudad:
+            return 1
+        return 0
+
 
 class ItemListadoCiudades:
 
@@ -40,7 +56,7 @@ class ItemListadoCiudades:
 
 class Escenario:
 
-    def __init__(self, f):
+    def __init__(self, f=None):
         """
         O(max(n,m+r)*log(n))
         n: Cantidad de ciudades
@@ -53,13 +69,14 @@ class Escenario:
         self.id_por_ciudad = ListaOrdenada() # O(1)
         self.tramos_por_ciudad_destino = [] # O(1)
 
+        if f is None:
+            return
+
         cantidad_ciudades = int(f.readline().strip()) # O(1)
         # O(n*log(n))
         for i in xrange(cantidad_ciudades): # n
             ciudad = f.readline().strip() # O(1)
-            self.id_por_ciudad.insert(ItemListadoCiudades(ciudad, len(self.ciudades))) # O(log(n))
-            self.ciudades.append(ciudad) # O(1)
-            self.tramos_por_ciudad_destino.append([]) # O(1)
+            self.add_ciudad(ciudad) # O(log(n))
 
         cantidad_trenes = int(f.readline().strip()) # O(1)
 
@@ -73,14 +90,51 @@ class Escenario:
                 horario_llegada, ciudad_destino = f.readline().strip().split(' ', 1) # O(1)
                 horario_llegada = normalizar_horario(horario_llegada) # O(1)
                 ciudad_destino = self.get_id_ciudad(ciudad_destino) # O(log(n))
-                self.tramos_por_ciudad_destino[ciudad_destino].append(
-                        Tramo(tren,ciudad_origen, ciudad_destino,
-                            horario_salida, horario_llegada)) # O(1)
+                self.add_tramo(tren, ciudad_origen, ciudad_destino,
+                        horario_salida, horario_llegada)
                 horario_salida, ciudad_origen = horario_llegada, ciudad_destino # O(1)
 
-        self.horario_inicial = normalizar_horario(f.readline().strip()) # O(1)
-        self.ciudad_origen = self.get_id_ciudad(f.readline().strip()) # O(log(n))
-        self.ciudad_destino = self.get_id_ciudad(f.readline().strip()) # O(log(n))
+        self.set_condiciones_iniciales(
+                horario_inicial = normalizar_horario(f.readline().strip()), # O(1)
+                ciudad_origen = self.get_id_ciudad(f.readline().strip()), # O(log(n))
+                ciudad_destino = self.get_id_ciudad(f.readline().strip()) # O(log(n))
+                )
+
+    def add_ciudad(self, ciudad):
+        """
+        O(log(n))
+        """
+        self.id_por_ciudad.insert(ItemListadoCiudades(ciudad, len(self.ciudades))) # O(log(n))
+        self.ciudades.append(ciudad) # O(1)
+        self.tramos_por_ciudad_destino.append([]) # O(1)
+
+    def add_tramo(self, tren, ciudad_origen, ciudad_destino,
+            horario_salida, horario_llegada):
+        """
+        O(1)
+        """
+        self.tramos_por_ciudad_destino[ciudad_destino].append(
+                Tramo(tren,ciudad_origen, ciudad_destino,
+                    horario_salida, horario_llegada)) # O(1)
+
+    def add_tramo_from_nombre_ciudades(self, tren, ciudad_origen, ciudad_destino,
+            horario_salida, horario_llegada):
+        """
+        O(log(n))
+        """
+        ciudad_origen = self.get_id_ciudad(ciudad_origen) # O(log(n))
+        ciudad_destino = self.get_id_ciudad(ciudad_destino) # O(log(n))
+        self.tramos_por_ciudad_destino[ciudad_destino].append(
+                Tramo(tren,ciudad_origen, ciudad_destino,
+                    horario_salida, horario_llegada)) # O(1)
+
+    def set_condiciones_iniciales(self, horario_inicial, ciudad_origen, ciudad_destino):
+        """
+        O(1)
+        """
+        self.horario_inicial = horario_inicial
+        self.ciudad_origen = ciudad_origen
+        self.ciudad_destino = ciudad_destino
 
     def get_id_ciudad(self, ciudad):
         """
@@ -109,7 +163,7 @@ class Escenario:
         for k in xrange(len(self.ciudades)): # n
             self.solucion.append([]) # O(1)
             for ciudad in xrange(len(self.ciudades)): # n
-                self.solucion[k].append(ListaOrdenada()) # O(1)
+                self.solucion[k].append(ListaOrdenada(permitir_repetidos=True)) # O(1)
 
         # O(1)
         self.solucion[0][self.ciudad_origen].insert(Optimo(
@@ -144,17 +198,24 @@ class Escenario:
 
         self.optimos = [] # O(1)
         tiempo_total_optimo = None # O(1)
+        horario_llegada_optimo = None
         # O(sum(pj)) = O(p)
         for k in xrange(len(self.ciudades)): # n
             for solucion in self.solucion[k][self.ciudad_destino].iteritems(): # sj = pj
-                if tiempo_total_optimo is None: # O(1)
+                if horario_llegada_optimo is None: # O(1)
                     self.optimos = [solucion] # O(1)
                     tiempo_total_optimo = solucion.tiempo_total # O(1)
-                elif solucion.tiempo_total == tiempo_total_optimo: # O(1)
-                    self.optimos.append(solucion) # O(1)
-                elif solucion.tiempo_total < tiempo_total_optimo: # O(1)
+                    horario_llegada_optimo = solucion.horario_llegada
+                elif solucion.horario_llegada < horario_llegada_optimo:
                     self.optimos = [solucion] # O(1)
                     tiempo_total_optimo = solucion.tiempo_total # O(1)
+                    horario_llegada_optimo = solucion.horario_llegada
+                elif solucion.horario_llegada == horario_llegada_optimo:
+                    if solucion.tiempo_total == tiempo_total_optimo: # O(1)
+                        self.optimos.append(solucion) # O(1)
+                    elif solucion.tiempo_total < tiempo_total_optimo: # O(1)
+                        self.optimos = [solucion] # O(1)
+                        tiempo_total_optimo = solucion.tiempo_total # O(1)
 
     def get_itinerarios_optimos(self):
         """
@@ -200,3 +261,60 @@ class Escenario:
                     item.hora, item.ciudad)
             print 'Arribo %s %s' % (
                     itinerario[-1].hora, itinerario[-1].ciudad)
+
+import unittest
+
+class EscenarioTestCase(unittest.TestCase):
+
+    def test_solucion(self):
+
+        E = Escenario()
+        E.add_ciudad('A')
+        E.add_ciudad('B')
+        E.add_ciudad('C')
+        E.add_ciudad('D')
+
+        A = E.get_id_ciudad('A')
+        B = E.get_id_ciudad('B')
+        C = E.get_id_ciudad('C')
+        D = E.get_id_ciudad('D')
+
+        E.add_tramo(1,A,B,normalizar_horario('0900'),normalizar_horario('1000'))
+        E.add_tramo(1,B,C,normalizar_horario('1030'),normalizar_horario('1100'))
+        E.add_tramo(1,C,D,normalizar_horario('1115'),normalizar_horario('1200'))
+
+        E.add_tramo(2,A,C,normalizar_horario('0900'),normalizar_horario('1000'))
+        E.add_tramo(2,C,D,normalizar_horario('1030'),normalizar_horario('1200'))
+
+        E.add_tramo(3,A,B,normalizar_horario('1600'),normalizar_horario('1700'))
+        E.add_tramo(3,B,D,normalizar_horario('1800'),normalizar_horario('1900'))
+
+        E.set_condiciones_iniciales(normalizar_horario('0800'),A,D)
+
+        E.resolver()
+
+        itinerarios = E.get_itinerarios_optimos()
+        self.assertEqual(len(itinerarios), 3)
+
+        # Tren 1
+        self.validar_itinerario(itinerarios, [('0900','A'), ('1000','B'), ('1100','C'), ('1200','D')], 1)
+
+        # Tren 2
+        # Tren 2 -> Tren 1
+        self.validar_itinerario(itinerarios, [('0900','A'), ('1000','C'), ('1200','D')], 2)
+
+    def validar_itinerario(self, itinerarios, itinerario, cantidad_esperada):
+        cantidad = 0
+        itinerario = [ItemItinerario(*x) for x in itinerario]
+        for x in itinerarios:
+            if x == itinerario:
+                cantidad += 1
+        self.assertEqual(cantidad, cantidad_esperada)
+        
+if __name__ == '__main__':
+    if len(sys.argv) == 1:
+        unittest.main()
+    else:
+        reporte_tp2()
+
+

@@ -8,8 +8,9 @@ class ElementoNoEncontrado(Exception):
 
 class ListaOrdenada():
 
-    def __init__(self):
+    def __init__(self, permitir_repetidos=False):
         self.lista = []
+        self.permitir_repetidos = permitir_repetidos
 
     def iteritems(self):
         """
@@ -22,8 +23,9 @@ class ListaOrdenada():
         O(n*log(n))
         """
         i = bisect.bisect_left(self.lista, node)
-        if i <> len(self.lista) and self.lista[i] == node: 
-            raise Exception('El nodo %s ya existe en la lista.' % node)
+        if not self.permitir_repetidos:
+            if i <> len(self.lista) and self.lista[i] == node: 
+                raise Exception('El nodo %s ya existe en la lista.' % node)
         return self.lista.insert(i, node)
 
     def has(self, node):
