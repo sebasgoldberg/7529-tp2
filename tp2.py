@@ -7,21 +7,45 @@ import sys
 class TP2:
 
     def __init__(self, filepath):
+        """
+        O(sum(max(ni,mi+ri)*log(ni)))
+        i: Denota el escenario i
+        n: Cantidad de ciudades
+        m: Cantidad de trenes
+        r: Cantidad de ciudades visitadas por los m trenes
+        """
         self.escenarios = []
         with open(filepath) as f:
             cantidad_escenarios = int(f.readline().strip())
+            # O(sum(max(ni,mi+ri)*log(ni)))
             for i in xrange(cantidad_escenarios):
-                self.escenarios.append(Escenario(f))
+                self.escenarios.append(Escenario(f)) # O(max(n,m+r)*log(n))
 
     def resolver(self):
+        """
+        O(sum(max(ni*pi*log(pi) + pi**2, ni**2)))
+        i: Denota el escenario i
+        n: Cantidad de ciudades
+        p: Cantidad de tramos (p = r-n)
+        r: Cantidad de ciudades visitadas por los m trenes
+        m: Cantidad de trenes
+        """
         for escenario in self.escenarios:
-            escenario.resolver()
+            escenario.resolver() # O(max(n*p*log(p) + p**2, n**2))
 
     def imprimir_solucion(self):
+        """
+        O(sum(pi*ni))
+        i: Denota el escenario i
+        n: Cantidad de ciudades
+        p: Cantidad de tramos (p = r-n)
+        r: Cantidad de ciudades visitadas por los m trenes
+        m: Cantidad de trenes
+        """
         for i in xrange(len(self.escenarios)):
             escenario = self.escenarios[i]
             print 'Escenario %s' % (i+1)
-            escenario.imprimir_solucion()
+            escenario.imprimir_solucion() # O(p*n)
             print
 
 

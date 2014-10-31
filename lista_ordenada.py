@@ -12,6 +12,9 @@ class ListaOrdenada():
         self.lista = []
 
     def iteritems(self):
+        """
+        O(1)
+        """
         return iter(self.lista)
 
     def insert(self, node):
@@ -25,16 +28,26 @@ class ListaOrdenada():
 
     def has(self, node):
         """
-        O(n*log(n))
+        O(log(n))
         """
         i = bisect.bisect_left(self.lista, node)
         if i <> len(self.lista) and self.lista[i] == node: 
             return True
         return False
 
+    def get_item(self, item):
+        """
+        O(log(n))
+        """
+        i = bisect.bisect_left(self.lista, item)
+        if i <> len(self.lista) and self.lista[i] == item: 
+            return self.lista[i]
+        raise ElementoNoEncontrado()
+
+
     def get_anterior_mas_cercano(self, x):
         """
-        O(n*log(n))
+        O(log(n))
         """
         if len(self.lista) == 0:
             raise ElementoNoEncontrado
