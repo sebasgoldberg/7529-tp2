@@ -151,6 +151,9 @@ class Escenario:
     def resolver(self):
         """
         O(max(n*p*log(p) + p**2, n**2))
+        n: Cantidad de ciudades
+        p: Cantidad de tramos (p = r-n)
+        r: Cantidad de ciudades visitadas por los m trenes
         self.solucion es una matriz donde la primer componente es la cantidad
         máxima de tramos necesarios para llegar a una ciudad, la segunda
         componente es la ciudad destino, y la tercera es la solucion optima
@@ -266,7 +269,7 @@ import unittest
 
 class EscenarioTestCase(unittest.TestCase):
 
-    def test_solucion(self):
+    def test_soluciones_mismo_horario_misma_duracion(self):
 
         E = Escenario()
         E.add_ciudad('A')
@@ -302,6 +305,43 @@ class EscenarioTestCase(unittest.TestCase):
         # Tren 2
         # Tren 2 -> Tren 1
         self.validar_itinerario(itinerarios, [('0900','A'), ('1000','C'), ('1200','D')], 2)
+
+    def test_solucion_menor_horario_mayor_duracion(self):
+
+        E = Escenario()
+        E.add_ciudad('A')
+        E.add_ciudad('B')
+        E.add_ciudad('C')
+        E.add_ciudad('D')
+
+        A = E.get_id_ciudad('A')
+        B = E.get_id_ciudad('B')
+        C = E.get_id_ciudad('C')
+        D = E.get_id_ciudad('D')
+
+        E.add_tramo(1,A,B,normalizar_horario('0900'),normalizar_horario('1000'))
+        E.add_tramo(1,B,C,normalizar_horario('1030'),normalizar_horario('1100'))
+        E.add_tramo(1,C,D,normalizar_horario('1115'),normalizar_horario('1200'))
+
+        E.add_tramo(2,A,C,normalizar_horario('0900'),normalizar_horario('1000'))
+        E.add_tramo(2,C,D,normalizar_horario('1030'),normalizar_horario('1200'))
+
+        E.add_tramo(3,A,B,normalizar_horario('1600'),normalizar_horario('1700'))
+        E.add_tramo(3,B,D,normalizar_horario('1800'),normalizar_horario('1900'))
+
+        E.add_tramo(4,A,B,normalizar_horario('0300'),normalizar_horario('0500'))
+
+        E.add_tramo(5,B,D,normalizar_horario('0600'),normalizar_horario('0800'))
+
+        E.set_condiciones_iniciales(normalizar_horario('0200'),A,D)
+
+        E.resolver()
+
+        itinerarios = E.get_itinerarios_optimos()
+        self.assertEqual(len(itinerarios), 1)
+
+        # Tren 4
+        self.validar_itinerario(itinerarios, [('0300','A'), ('0500','B'), ('0800','D')], 1)
 
     def validar_itinerario(self, itinerarios, itinerario, cantidad_esperada):
         cantidad = 0
