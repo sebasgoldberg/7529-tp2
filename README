@@ -1,0 +1,18 @@
+Ejecución de la aplicación
+--------------------------
+
+$ ./tp2.py [<path_a_archivo>, ...]
+
+Parémetros: simplemente pasar un archivo el cual se desea procesar con el formato definido por el enunciado del TP.
+
+La ejecución generará un reporte por salida estándar.
+
+
+Ejecución de las pruebas
+------------------------
+
+$ ./tp2.py
+$ ./escenario.py
+$ ./lista_ordenada.py
+
+Se mostrará el resultado de cada caso de pruebas.
