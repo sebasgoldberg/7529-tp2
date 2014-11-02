@@ -54,6 +54,10 @@ class ItemListadoCiudades:
             return 1
         return 0
 
+    def __str__(self):
+        return '(%s, %s)' % (self.nombre, self.id)
+
+
 class Escenario:
 
     def __init__(self, f=None):

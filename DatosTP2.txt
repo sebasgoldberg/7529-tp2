@@ -52,7 +52,7 @@ Viedma
 V.O. Connor
 San Antonio Oeste
 Valcheta
-Ing. Jacobacci
+Ing. Jacobaci
 Onelli
 Pilcaniyeu
 Bariloche
@@ -71,7 +71,7 @@ Mar del Plata
 0000 Viedma
 0200 Mar del Plata
 0500 Chascomus
-0800 Buenos Aires
+0800 Bs As
 3
 0500 Chascomus
 1000 Ing. Jacobaci
