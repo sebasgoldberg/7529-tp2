@@ -1,0 +1,95 @@
+2
+8
+Jujuy
+Salta
+Mendoza
+Tucuman
+Bs As
+Rosario
+Tierra del Fuego
+Bariloche
+10
+3
+0100 Jujuy
+0300 Salta
+0500 Tucuman
+3
+0300 Jujuy
+0500 Salta
+0700 Tucuman
+2
+0700 Tucuman
+2200 Rosario
+3
+0000 Bs As
+1200 Bariloche
+2200 Tierra del Fuego
+3
+0600 Salta
+1700 Mendoza
+2300 Bariloche
+2
+0200 Bariloche
+1230 Tierra del Fuego
+2
+0500 Salta
+1500 Bariloche
+2
+0000 Mendoza
+1200 Bariloche
+3
+0000 Mendoza
+0500 Tucuman
+0600 Salta
+2
+1500 Bariloche
+2200 Tierra del Fuego
+0000
+Jujuy
+Tierra del Fuego
+13
+Viedma
+V.O. Connor
+San Antonio Oeste
+Valcheta
+Ing. Jacobacci
+Onelli
+Pilcaniyeu
+Bariloche
+Sierra Colorada
+Comallo
+Bs As
+Chascomus
+Mar del Plata
+5
+4
+0300 Bs As
+0600 Chascomus
+0900 Mar del Plata
+1100 Viedma
+4
+0000 Viedma
+0200 Mar del Plata
+0500 Chascomus
+0800 Buenos Aires
+3
+0500 Chascomus
+1000 Ing. Jacobaci
+1630 Bariloche
+2
+0900 Mar del Plata
+1200 Comallo
+10
+0500 Viedma
+0600 V.O. Connor
+0700 San Antonio Oeste
+0800 Valcheta
+0900 Sierra Colorada
+1000 Ing. Jacobaci
+1100 Onelli
+1300 Comallo
+1400 Pilcaniyeu
+1700 Bariloche
+0000
+Mar del Plata
+Bariloche
