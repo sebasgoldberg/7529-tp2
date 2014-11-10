@@ -154,7 +154,7 @@ class Escenario:
 
     def resolver(self):
         """
-        O(max(n*p*log(p) + p**2, n**2))
+        O(n*p*log(p) + p**2 + n**2)
         n: Cantidad de ciudades
         p: Cantidad de tramos (p = r-n)
         r: Cantidad de ciudades visitadas por los m trenes
@@ -355,10 +355,7 @@ class EscenarioTestCase(unittest.TestCase):
                 cantidad += 1
         self.assertEqual(cantidad, cantidad_esperada)
         
-if __name__ == '__main__':
-    if len(sys.argv) == 1:
-        unittest.main()
-    else:
-        reporte_tp2()
 
+if __name__ == '__main__':
+    unittest.main()
 
